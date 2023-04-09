@@ -1,7 +1,9 @@
 |>
-	pointer = 0
+  bf = {}
   
-  function move_ptr_from_to(current, target)
+	bf.pointer = 0
+  
+  function bf.move_ptr_from_to(current, target)
     if target > current then
 			return (">"):rep(target - current)
 		else 
@@ -9,13 +11,13 @@
 		end
   end
   
-	function move_ptr(target)
-		local mov = move_ptr_from_to(pointer, target)
-		pointer = target
+	function bf.move_ptr(target)
+		local mov = bf.move_ptr_from_to(bf.pointer, target)
+		bf.pointer = target
 		return mov
 	end
   
-	function inc_by(by)
+	function bf.inc_by(by)
 		if by > 0 then
 			return ("+"):rep(by)
 		else
@@ -23,60 +25,62 @@
 		end
 	end
   
-  function dec_by(by)
-    return inc_by(-by)
+  function bf.dec_by(by)
+    return bf.inc_by(-by)
   end
 
-	function move_to(...)
-    local prev_target = pointer
+	function bf.move_to(...)
+    local prev_target = bf.pointer
     local increment_cells = {}
     for i, target in ipairs({...}) do
-      increment_cells[i] = move_ptr_from_to(prev_target, target) .. "+"
+      increment_cells[i] = bf.move_ptr_from_to(prev_target, target) .. "+"
       prev_target = target
     end
     return table.concat {
       "[-",
       table.concat(increment_cells),
-      move_ptr_from_to(prev_target, pointer),
+      bf.move_ptr_from_to(prev_target, bf.pointer),
       "]",
     }
 	end
   
   --TODO copy to multiple
-  function copy_to(temporary, target)
-    local _pointer = pointer
+  function bf.copy_to(temporary, target)
+    local _pointer = bf.pointer
     return table.concat {
-      move_to(target, temporary),
-      move_ptr(temporary),
-      move_to(_pointer),
-      move_ptr(_pointer),
+      bf.move_to(target, temporary),
+      bf.move_ptr(temporary),
+      bf.move_to(_pointer),
+      bf.move_ptr(_pointer),
     }
   end
   
   ---reset the cell to zero
-  set_0 = "[-]"
+  bf.set_0 = "[-]"
+  
+  ---prints string (needs to be zero terminated on *both* ends!)
+  bf.print_zero_terminated = "[.>]<[<]>"
   
   ---increment/decrement double-cell integer, requres one free cell to the right
-  inc_double = "+>+[<->[->+<]]>[-<+>]<<"
-  dec_double = ">[<+>[->+<]]>[-<+>]<-<-"
+  bf.inc_double = "+>+[<->[->+<]]>[-<+>]<<"
+  bf.dec_double = ">[<+>[->+<]]>[-<+>]<-<-"
   
-  function inc_double_by(by)
+  function bf.inc_double_by(by)
     if by > 0 then
-			return (inc_double):rep(by)
+			return (bf.inc_double):rep(by)
 		else
-			return (dec_double):rep(-by)
+			return (bf.dec_double):rep(-by)
 		end
   end
-  function dec_double_by(by)
-    return inc_double_by(-by)
+  function bf.dec_double_by(by)
+    return bf.inc_double_by(-by)
   end
   
-  function add_single_to_double(double_ptr)
+  function bf.add_single_to_double(double_ptr)
     return table.concat {
       "[",
-      move_ptr_from_to(pointer, target),
-      
-      move_ptr_from_to(target, pointer),
+        bf.move_ptr_from_to(pointer, target),
+        bf.move_ptr_from_to(target, pointer),
       "]",
     }
   end

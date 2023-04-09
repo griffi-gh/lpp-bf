@@ -4,5 +4,12 @@
 |>! postprocess "remove_whitespace" <|
 |>! postprocess "optimize_bf" <|
 
-|>! inc_by(100) <|
-|>! copy_to(2, 1) <|
+|>
+  local text = "hello world"
+  for i=1,#text do
+    _(bf.move_ptr(i))
+    _(bf.inc_by(text:sub(i,i):byte()))
+  end
+  _(bf.move_ptr(1))
+  _(bf.print_zero_terminated)
+<|
